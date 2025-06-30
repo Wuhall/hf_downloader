@@ -1,77 +1,77 @@
-# HuggingFace Model Downloader
+# HuggingFace 模型下载器
 
-A high-performance utility for downloading large model files from HuggingFace using aria2. Especially useful for models split into multiple files.
+基于 aria2 实现的高性能 HuggingFace 大模型文件下载工具。特别适用于分片存储的大模型下载。
 
-## Features
+## 功能特色
 
-- 🔍 Automatic detection of file patterns and counts
-- ✨ Parallel downloading with aria2
-- 🔄 Automatic resume of interrupted downloads
-- 🚀 Optimized connection settings
-- 📝 Detailed logging
-- 🔍 Skip existing files
-- ⚡ Multiple connections per file
-- 🎯 Flexible file pattern matching
-- 🗂️ Automatic directory organization
+- 🔍 自动检测文件命名模式和文件数量
+- ✨ 使用 aria2 并行下载
+- 🔄 支持断点续传
+- 🚀 优化的连接参数
+- 📝 详细日志记录
+- 🔍 已有文件自动跳过
+- ⚡ 单文件多连接下载
+- 🎯 灵活的文件命名模式匹配
+- 🗂️ 自动目录整理
 
-## Prerequisites
+## 先决条件
 
-1. Python 3.7+
-2. aria2c installed on your system
-3. Python packages: `requests`
+1. Python 3.7 及以上
+2. 系统已安装 aria2c
+3. Python 依赖包：`requests`
 
-### Installing Requirements
+### 安装依赖
 
 ```bash
-# Install aria2
+# 安装 aria2
 sudo apt-get install aria2  # Ubuntu/Debian
 brew install aria2         # macOS
-# Windows: Download from https://github.com/aria2/aria2/releases
+# Windows: 从 https://github.com/aria2/aria2/releases 下载
 
-# Install Python dependencies
+# 安装 Python 依赖
 pip install requests
 ```
 
-## Usage
+## 使用方法
 
-### Basic Usage (Automatic Detection)
+### 基本用法（自动检测）
 
-Simply specify the repository ID:
+只需指定仓库 ID 即可：
 ```python
 from hf_model_downloader import HFModelDownloader
 
-# Auto-detect everything
+# 全自动检测
 downloader = HFModelDownloader(
     repo_id="deepseek-ai/DeepSeek-R1"
 )
 downloader.start_download()
 ```
 
-The downloader will:
-1. Detect the file pattern in the repository
-2. Count the number of files
-3. Determine the starting index
-4. Create appropriate output directory
-5. Download all files in parallel
+下载器会自动完成：
+1. 检测仓库中的文件命名模式
+2. 统计文件数量
+3. 判断起始索引
+4. 创建合适的输出目录
+5. 并行下载所有文件
 
-### Advanced Usage
+### 高级用法
 
-You can override any auto-detected values:
+你可以覆盖任何自动检测的参数：
 
 ```python
-# Example 1: Auto-detect with custom output directory
+# 示例1：自动检测，指定输出目录
 downloader = HFModelDownloader(
     repo_id="deepseek-ai/DeepSeek-R1",
     output_dir="my-model"
 )
 
-# Example 2: Specify pattern but auto-detect count
+# 示例2：指定命名模式，自动检测文件数量
 downloader = HFModelDownloader(
     repo_id="organization/model-name",
     pattern="pytorch_model-{i:02d}.bin"
 )
 
-# Example 3: Full manual configuration
+# 示例3：完全手动配置
 downloader = HFModelDownloader(
     repo_id="organization/model-name",
     pattern="model.safetensors.{i:02d}",
@@ -81,35 +81,35 @@ downloader = HFModelDownloader(
 )
 ```
 
-### Supported File Patterns
+### 支持的文件命名模式
 
-The auto-detection supports common model file patterns:
+自动检测支持常见的模型文件命名规则：
 
-1. `model-00001-of-00163.safetensors` (e.g., DeepSeek models)
-2. `pytorch_model-00001.bin` (e.g., standard PyTorch checkpoints)
-3. `model.safetensors.00001` (e.g., alternative numbering)
+1. `model-00001-of-00163.safetensors`（如 DeepSeek 模型）
+2. `pytorch_model-00001.bin`（标准 PyTorch 检查点）
+3. `model.safetensors.00001`（另一种编号方式）
 
-Extensions supported: `.safetensors`, `.bin`, `.pt`, `.pth`
+支持的扩展名：`.safetensors`、`.bin`、`.pt`、`.pth`
 
-### Configuration Options
+### 配置选项
 
-- `repo_id`: HuggingFace repository ID (e.g., "deepseek-ai/DeepSeek-R1")
-- `pattern`: Filename pattern (auto-detected if not specified)
-- `output_dir`: Directory to save files (defaults to last part of repo_id)
-- `num_files`: Total number of files (auto-detected if not specified)
-- `start_index`: Starting index (auto-detected if not specified)
-- `max_concurrent_downloads`: Number of parallel downloads (default: 16)
-- `max_connection_per_server`: Connections per server (default: 16)
-- `min_split_size`: Minimum split size for parallel downloading (default: "1M")
+- `repo_id`：HuggingFace 仓库 ID（如 "deepseek-ai/DeepSeek-R1"）
+- `pattern`：文件命名模式（未指定时自动检测）
+- `output_dir`：保存文件的目录（默认取 repo_id 最后一部分）
+- `num_files`：文件总数（未指定时自动检测）
+- `start_index`：起始索引（未指定时自动检测）
+- `max_concurrent_downloads`：并行下载数（默认16）
+- `max_connection_per_server`：每服务器最大连接数（默认16）
+- `min_split_size`：并行下载的最小分片大小（默认"1M"）
 
-## Generated Files
+## 生成的文件
 
-- `aria2_urls.txt`: Contains download URLs and output paths
-- `aria2_download.log`: Detailed download log
+- `aria2_urls.txt`：包含下载链接和输出路径
+- `aria2_download.log`：详细下载日志
 
-## Example Command Generation
+## 生成命令示例
 
-To generate aria2 commands without downloading:
+只生成 aria2 命令而不下载：
 
 ```python
 from hf_model_downloader import HFModelDownloader
@@ -119,111 +119,111 @@ cmd = downloader.generate_aria2_command()
 print(" ".join(cmd))
 ```
 
-## Troubleshooting
+## 常见问题
 
-1. **Pattern Detection Failed**:
-   - Check if the repository is public and accessible
-   - Verify that files follow one of the supported patterns
-   - Try specifying the pattern manually
+1. **模式检测失败**：
+   - 检查仓库是否公开可访问
+   - 确认文件命名是否符合支持的模式
+   - 尝试手动指定 pattern
 
-2. **aria2c not found**:
-   - Make sure aria2 is installed
-   - Check if aria2c is in your PATH
+2. **找不到 aria2c**：
+   - 确认 aria2 已安装
+   - 检查 aria2c 是否在 PATH 路径下
 
-3. **Download interrupted**:
-   - Simply run the script again, it will resume automatically
+3. **下载中断**：
+   - 直接重新运行脚本即可自动断点续传
 
-4. **Connection issues**:
-   - Try reducing `max_concurrent_downloads` and `max_connection_per_server`
-   - Check your internet connection
-   - Verify you have enough disk space
+4. **连接问题**：
+   - 尝试降低 `max_concurrent_downloads` 和 `max_connection_per_server`
+   - 检查网络连接
+   - 确认磁盘空间充足
 
-## Contributing
+## 参与贡献
 
-Feel free to submit issues and enhancement requests!
+欢迎提交 issue 和功能改进建议！
 
-## Using with AI Agents
+## 与 AI Agent 协作
 
-This downloader is designed to be agent-friendly, making it easy to use with AI assistants like Claude in Cursor.
+本下载器设计为 Agent 友好，便于与如 Cursor 的 Claude 等 AI 助手配合使用。
 
-### Using in Cursor
+### 在 Cursor 中使用
 
-1. Switch to Composer mode in Cursor
-2. Change mode from `normal` to `agent`
-3. Include this README in the context:
+1. 在 Cursor 切换到 Composer 模式
+2. 将模式从 `normal` 改为 `agent`
+3. 在上下文中包含本 README：
    ```
    @README
    ```
-4. Ask the agent to download a model using natural language:
+4. 用自然语言让 agent 下载模型：
    ```
-   Please download the DeepSeek Coder model for me using the command line.
+   请帮我用命令行下载 DeepSeek Coder 模型。
    ```
-   or
+   或
    ```
-   Can you help me download CodeLlama? I have the downloader installed and want to use the CLI.
+   你能帮我下载 CodeLlama 吗？我已经安装了下载器，想用 CLI 下载。
    ```
 
-The agent will:
-1. Understand your request
-2. Determine the correct repository ID
-3. Generate and execute the appropriate command
-4. Monitor the download process
+Agent 会自动：
+1. 理解你的请求
+2. 判断正确的仓库 ID
+3. 生成并执行合适的命令
+4. 监控下载进度
 
-### Example Agent Interactions
+### Agent 交互示例
 
 ```
-User: Can you download the DeepSeek-R1 model for me using the command line? The URL is https://huggingface.co/deepseek-ai/DeepSeek-R1/tree/main
+用户：你能帮我用命令行下载 DeepSeek-R1 模型吗？URL 是 https://huggingface.co/deepseek-ai/DeepSeek-R1/tree/main
 
-Agent: I'll help you download the DeepSeek-R1 model using the command-line interface.
-I'll run the downloader with the appropriate repository ID:
+Agent：我来帮你用命令行下载 DeepSeek-R1 模型。
+我会用合适的仓库 ID 运行下载器：
 
-Running command: python3 hf_model_downloader.py --repo-id deepseek-ai/DeepSeek-R1
+运行命令：python3 hf_model_downloader.py --repo-id deepseek-ai/DeepSeek-R1
 
-The downloader will:
-- Auto-detect the file pattern and count
-- Set up parallel downloads with aria2
-- Create the output directory
-- Show download progress in the terminal
+下载器会：
+- 自动检测文件命名和数量
+- 设置 aria2 并行下载
+- 创建输出目录
+- 在终端显示下载进度
 
-You can interrupt the download anytime with Ctrl+C and resume it later by running the same command.
+你可以随时用 Ctrl+C 中断下载，之后再次运行脚本即可断点续传。
 
-User: Can you download it to a specific directory?
+用户：可以下载到指定目录吗？
 
-Agent: I'll run the downloader with a custom output directory:
+Agent：我会用自定义输出目录运行下载器：
 
-Running command: python3 hf_model_downloader.py --repo-id deepseek-ai/DeepSeek-R1 --output-dir ./my-models/deepseek
+运行命令：python3 hf_model_downloader.py --repo-id deepseek-ai/DeepSeek-R1 --output-dir ./my-models/deepseek
 ```
 
-### Command-Line Options
+### 命令行选项
 
-The agent understands these command-line arguments:
+Agent 理解以下命令行参数：
 ```bash
-python3 hf_model_downloader.py [options]
+python3 hf_model_downloader.py [选项]
 
-Options:
-  --repo-id                  HuggingFace repository ID
-  --output-dir              Custom output directory
-  --pattern                 Custom file pattern (auto-detected by default)
-  --num-files              Number of files (auto-detected by default)
-  --start-index            Starting index (auto-detected by default)
-  --max-concurrent         Maximum concurrent downloads (default: 16)
-  --max-connections        Maximum connections per server (default: 16)
-  --min-split-size         Minimum split size (default: "1M")
+选项：
+  --repo-id                  HuggingFace 仓库 ID
+  --output-dir              自定义输出目录
+  --pattern                 自定义文件命名模式（默认自动检测）
+  --num-files               文件数量（默认自动检测）
+  --start-index             起始索引（默认自动检测）
+  --max-concurrent          最大并行下载数（默认：16）
+  --max-connections         每服务器最大连接数（默认：16）
+  --min-split-size          最小分片大小（默认："1M"）
 ```
 
-### Agent-Friendly Features
+### Agent 友好特性
 
-- Natural language understanding of command-line options
-- Smart defaults requiring minimal configuration
-- Clear terminal output
-- Progress reporting
-- Error handling
-- Resumable downloads
+- 自然语言理解命令行选项
+- 智能默认值，最小化配置需求
+- 清晰的终端输出
+- 进度报告
+- 错误处理
+- 可恢复的下载
 
-### Tips for Agent Interaction
+### Agent 交互技巧
 
-- Specify the model you want to download, with URL
-- Mention any special requirements (e.g., output directory)
-- Ask for command explanations if needed
-- Request download status checks
-- Ask for help with any error messages
+- 指定要下载的模型，并提供 URL
+- 提及任何特殊要求（如输出目录）
+- 如需要可要求解释命令
+- 请求下载状态检查
+- 寻求错误信息帮助
