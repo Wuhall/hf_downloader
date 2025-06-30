@@ -1,2 +1,0 @@
-/api/resolve-cache/models/HuggingFaceTB/SmolLM2-135M/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/config.json?%2FHuggingFaceTB%2FSmolLM2-135M%2Fresolve%2Fmain%2Fconfig.json=&etag=%22ccf3dac2f33905d152adbdf3886b5e38a4eb7579%22
-  out=model/config.json
